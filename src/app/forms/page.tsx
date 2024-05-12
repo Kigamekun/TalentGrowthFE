@@ -2,6 +2,7 @@
 'use client';
 
 import Image from "next/image";
+import Modal from "../components/modal";
 import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
@@ -279,7 +280,7 @@ export default function Page() {
                                             Photo
                                         </label>
                                         <div className="mt-2 flex items-center gap-x-3">
-                                            <input ref={fileInputRef} onChange={handleThumbChange} type="file" className="hidden" />
+                                            <input ref={fileInputRef}  onChange={handleThumbChange} type="file" className="hidden" />
                                             {thumbPreview && (
                                                 <div
                                                     className="w-20 h-20 bg-cover bg-center rounded-md mb-2"
