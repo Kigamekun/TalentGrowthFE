@@ -101,7 +101,7 @@ export default function Page() {
                 if (selectedCover) {
                     formData.append('cover', selectedCover);
                 }
-                const response = await axios.post("https://fan-liberating-tabletop.glitch.me/users", formData, {
+                const response = await axios.post("https://cool-ionized-skink.glitch.me/users", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data" // set content type to multipart/form-data
                     }
@@ -122,7 +122,7 @@ export default function Page() {
 
     const getUsers = async () => {
         try {
-            const response = await fetch("https://fan-liberating-tabletop.glitch.me/users");
+            const response = await fetch("https://cool-ionized-skink.glitch.me/users");
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);

@@ -37,7 +37,7 @@ export default function Page() {
 
         if (Object.keys(errors).length === 0) {
             try {
-                const response = await fetch("https://fan-liberating-tabletop.glitch.me/users", {
+                const response = await fetch("https://cool-ionized-skink.glitch.me/users", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function Page() {
 
     const getUsers = async () => {
         try {
-            const response = await fetch("https://fan-liberating-tabletop.glitch.me/users");
+            const response = await fetch("https://cool-ionized-skink.glitch.me/users");
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -105,7 +105,7 @@ export default function Page() {
                                         <td>
                                             <div className="flex items-center gap-3">
                                                 <div>
-                                                    <Image src={`https://fan-liberating-tabletop.glitch.me${user.thumbUrl}`} width={50} height={50} className="rounded" alt={""} />
+                                                    <Image src={`https://cool-ionized-skink.glitch.me${user.thumbUrl}`} width={50} height={50} className="rounded" alt={""} />
                                                 </div>
                                                 <div>
                                                     <div className="font-bold">{user.name}</div>
