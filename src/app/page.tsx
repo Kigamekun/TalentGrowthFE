@@ -1,113 +1,200 @@
+'use client';
+
 import Image from "next/image";
+import Modal from "./components/modal";
+import { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type FormValues = {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  address: string;
+  birth: string;
+};
+
 
 export default function Home() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>()
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        const response = await fetch("https://fan-liberating-tabletop.glitch.me/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (response.ok) {
+          const modal = document.getElementById('my_modal_1') as HTMLDialogElement;
+          if (modal) {
+            modal.close();
+          }
+          getUsers();
+        } else {
+          // Handle error
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  }
+
+  const [users, setUsers] = useState([]);
+
+
+  const getUsers = async () => {
+    try {
+      const response = await fetch("https://fan-liberating-tabletop.glitch.me/users");
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUsers(data);
+      } else {
+        // Handle error
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div>
+
+
+      <div className="mx-auto my-20 card w-10/12 p-5 bg-base-100 shadow-xl">
+
+        <div className="flex justify-between">
+          <h2 className="card-title mb-10">Form Data</h2>
+
+          <button className="btn btn-primary text-white" onClick={() => {
+            const modal = document.getElementById('my_modal_1') as HTMLDialogElement;
+            if (modal) {
+              modal.showModal();
+            }
+          }}>Create</button>
         </div>
+        <div className="overflow-x-auto">
+          <table className="table">
+            {/* head */}
+            <thead>
+              <tr>
+                <th>
+                  <label>
+                    <input type="checkbox" className="checkbox" />
+                  </label>
+                </th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user: any, key: number) => (
+                <tr key={key}>
+                  <th>
+                    <label>
+                      <input type="checkbox" className="checkbox" />
+                    </label>
+                  </th>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="font-bold">{user.name}</div>
+                        <div className="text-sm opacity-50">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {user.phone}
+                    
+                  </td>
+                  <td>{user.address}</td>
+                  <th>
+                    <button className="btn btn-ghost btn-xs">details</button>
+                  </th>
+                </tr>
+              ))}
+            </tbody>
+            {/* foot */}
+            <tfoot>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th></th>
+              </tr>
+            </tfoot>
+
+          </table>
+        </div>
+
       </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      <dialog id="my_modal_1" className="modal ">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="modal-box ">
+            <label className={errors.name ? "input input-bordered flex items-center gap-2 input-error" : "input input-bordered flex items-center gap-2"}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
+              <input type="text" className="grow" placeholder="name" {...register("name", { required: true })} />
+            </label>
+            {errors.name && <label className="label text-sm text-red-500 label-error">name is required</label>}
+            <label className="input input-bordered flex items-center mt-3 gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
+              <input type="text" className="grow" placeholder="Phone" {...register("phone", { required: true })} />
+            </label>
+            {errors.phone && <label className="label text-sm text-red-500 label-error">Phone is required</label>}
+            <label className="input input-bordered flex items-center mt-3 gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" /><path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" /></svg>
+              <input type="text" className="grow" placeholder="Email" {...register("email", { required: true })} />
+            </label>
+            {errors.email && <label className="label text-sm text-red-500 label-error">Email is required</label>}
+            <label className="input input-bordered flex items-center mt-3 gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" /></svg>
+              <input type="password" className="grow" value="password" {...register("password", { required: true })} />
+            </label>
+            {errors.password && <label className="label text-sm text-red-500 label-error">Password is required</label>}
+            <br />
+            <textarea className="textarea textarea-bordered grow w-full" placeholder="Address" {...register("address", { required: true })} ></textarea>
+            {errors.address && <label className="label text-sm text-red-500 label-error">Address is required</label>}
+            <br />
+            <label className="input input-bordered flex items-center mt-3 gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
+              <input type="date" className="grow" placeholder="Birth"  {...register("birth", { required: true })} />
+            </label>
+            {errors.birth && <label className="label text-sm text-red-500 label-error">Birth is required</label>}
+            <div className="modal-action">
+              {/* if there is a button in form, it will close the modal */}
+              <button type="button" className="btn" onClick={() => {
+                const modal = document.getElementById('my_modal_1') as HTMLDialogElement;
+                if (modal) {
+                  modal.close();
+                }
+              }}>Close</button>
+              <button type="submit" className="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </form>
+      </dialog>
+    </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
   );
 }
