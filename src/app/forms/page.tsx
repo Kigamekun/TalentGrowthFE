@@ -107,7 +107,7 @@ export default function Page() {
                         "Content-Type": "multipart/form-data" // set content type to multipart/form-data
                     }
                 });
-                if (response.status === 200) {
+                if (response.status === 201) {
                     router.push('/data');
                 } else {
                     // Handle error

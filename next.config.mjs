@@ -2,7 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['localhost', 'res.cloudinary.com','https://cool-ionized-skink.glitch.me'],
+        domains: ['localhost', 'res.cloudinary.com','cool-ionized-skink.glitch.me'],
     },
     async headers() {
         return [
